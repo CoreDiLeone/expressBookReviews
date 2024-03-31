@@ -10,18 +10,18 @@ public_users.post("/register", (req, res) => {
   const password = req.body.password;
 
   if (!username || !password) {
-    return res.status(400).json({ message: "El nombre de usuario y la contraseña son obligatorios." });
+    return res.status(400).json({ message: "Username and password are required." });
   }
 
   const userExists = users.some(user => user.username === username);
   if (userExists) {
-    return res.status(409).json({ message: "El nombre de usuario ya está en uso." });
+    return res.status(409).json({ message: "The username is already in use." });
   }
 
  
   users.push({ username, password });
 
-  return res.status(201).json({ message: "Usuario registrado exitosamente. Ahora puedes iniciar sesión." });
+  return res.status(201).json({ message: "User successfully registered. Now you can log in." });
 });
 
 // Get the book list available in the shop
@@ -39,7 +39,7 @@ public_users.get('/', async function (req, res) {
 } catch (error) {
    
     console.error("Error:", error);
-    return res.status(500).json({ message: "Error interno del servidor" });
+    return res.status(500).json({ message: "internal error" });
 }
  
 });
@@ -51,23 +51,23 @@ public_users.get('/isbn/:isbn', async function (req, res) {
       const book = await getBookByIsbn(isbn);
 
       if (book) {
-          res.send(book);
+        return res.status(200).json({message: "Request successful :)", book: book}); 
       } else {
-          res.status(404).send("Libro no encontrado");
+        return  res.status(404).send("book not found");
       }
   } catch (error) {
       console.error("Error:", error);
-      return res.status(500).json({ message: "Error interno del servidor" });
+      return res.status(500).json({ message: "internal error" });
   }
 });
 
-// Función para obtener un libro por su ISBN de manera asíncrona
+
 async function getBookByIsbn(isbn) {
   return new Promise((resolve, reject) => {
       setTimeout(() => {
           const book = books[isbn];
           resolve(book);
-      }, 2000); // Simulación de operación asíncrona
+      }, 2000); 
   });
 }
 
@@ -79,17 +79,17 @@ public_users.get('/author/:author', async function (req, res) {
       const booksByAuthor = await getBooksByAuthor(authorToFind);
 
       if (booksByAuthor.length > 0) {
-          res.send(booksByAuthor);
+        return res.status(200).json({book: booksByAuthor}); 
       } else {
-          res.status(404).send("Autor no encontrado");
+        return  res.status(404).send("author not found");
       }
   } catch (error) {
       console.error("Error:", error);
-      return res.status(500).json({ message: "Error interno del servidor" });
+      return res.status(500).json({ message: "Internal error" });
   }
 });
 
-// Función para obtener libros por autor de manera asíncrona
+
 async function getBooksByAuthor(authorToFind) {
   return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -101,7 +101,7 @@ async function getBooksByAuthor(authorToFind) {
               }
           }
           resolve(booksByAuthor);
-      }, 2000); // Simulación de operación asíncrona
+      }, 2000); 
   });
 }
 
@@ -113,17 +113,17 @@ public_users.get('/title/:title', async function (req, res) {
       const booksByTitle = await getBooksByTitle(titleToFind);
 
       if (booksByTitle.length > 0) {
-          res.send(booksByTitle);
+        return res.status(200).json({book: booksByTitle});
       } else {
-          res.status(404).send("Título no encontrado");
+        return  res.status(404).send("title not found");
       }
   } catch (error) {
       console.error("Error:", error);
-      return res.status(500).json({ message: "Error interno del servidor" });
+      return res.status(500).json({ message: "Internal error" });
   }
 });
 
-// Función para obtener libros por título de manera asíncrona
+
 async function getBooksByTitle(titleToFind) {
   return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -135,7 +135,7 @@ async function getBooksByTitle(titleToFind) {
               }
           }
           resolve(booksByTitle);
-      }, 2000); // Simulación de operación asíncrona
+      }, 2000); 
   });
 }
 
@@ -151,17 +151,16 @@ public_users.get('/review/:isbn',function (req, res) {
     const book = books[value];
     if (value === reviewToFind) {
       if (book.reviews) { 
-        booksByReviews.push(book);
+        booksByReviews.push(book.reviews);
       }
     }
   }
 
   if (booksByReviews.length > 0) {
-    res.send(booksByReviews); 
+    return res.status(200).json({message: booksByReviews}); 
   } else {
-    res.status(404).send("Reviews not found");
+    return res.status(404).send("Reviews not found");
   }
-  return res.status(300).json({message: "Yet to be implemented"});
 });
 
 module.exports.general = public_users;
